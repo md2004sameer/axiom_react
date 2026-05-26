@@ -1,4 +1,4 @@
-export const BASE = "http://localhost:8080";
+export const BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export const AVATAR_COLORS = [
   "#3B74F6",
