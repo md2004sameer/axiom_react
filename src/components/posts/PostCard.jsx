@@ -107,9 +107,9 @@ export function PostCard({
         {/* Avatar */}
         <div
           style={{ cursor: "pointer", flexShrink: 0 }}
-          onClick={() => nav("profile", { username: post.author })}
+          onClick={() => nav("profile", { username: post.username })}
         >
-          <Avatar username={post.author} size={42} />
+          <Avatar username={post.username} size={42} />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -131,16 +131,16 @@ export function PostCard({
                   cursor: "pointer",
                   letterSpacing: "-0.01em",
                 }}
-                onClick={() => nav("profile", { username: post.author })}
+                onClick={() => nav("profile", { username: post.username })}
               >
-                {post.author}
+                {post.username}
               </span>
               <span style={{ color: "#484865", fontSize: 13 }}>·</span>
               <span style={{ color: "#484865", fontSize: 13 }}>
                 {timeAgo(post.createdAt)}
               </span>
             </div>
-            {post.author === currentUser && (
+            {post.username === currentUser && (
               <button
                 onClick={() => onDelete(post.id)}
                 style={{
@@ -344,7 +344,7 @@ export function PostCard({
                     borderTop: "1px solid #12121F",
                   }}
                 >
-                  <Avatar username={c.author} size={28} />
+                  <Avatar username={c.username} size={28} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div
                       style={{
@@ -363,16 +363,16 @@ export function PostCard({
                             cursor: "pointer",
                           }}
                           onClick={() =>
-                            nav("profile", { username: c.author })
+                            nav("profile", { username: c.username })
                           }
                         >
-                          {c.author}
+                          {c.username}
                         </span>
                         <span style={{ color: "#484865", fontSize: 12 }}>
                           {timeAgo(c.createdAt)}
                         </span>
                       </div>
-                      {c.author === currentUser && (
+                      {c.username === currentUser && (
                         <button
                           onClick={() => deleteComment(c.id)}
                           style={{

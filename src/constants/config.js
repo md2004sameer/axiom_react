@@ -1,4 +1,4 @@
-export const BASE = "http://192.168.1.3:8080";
+export const BASE = "http://localhost:8080";
 
 export const AVATAR_COLORS = [
   "#3B74F6",
