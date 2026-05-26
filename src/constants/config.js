@@ -1,4 +1,6 @@
-export const BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+// In dev, Vite proxies /api → localhost:8080, so BASE is empty (same origin).
+// In production, set VITE_API_URL to your backend's full URL.
+export const BASE = import.meta.env.VITE_API_URL || "";
 
 export const AVATAR_COLORS = [
   "#3B74F6",

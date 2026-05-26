@@ -9,7 +9,6 @@ import { api } from "../../utils/api";
 export function PostListPage({
   endpoint,
   title,
-  token,
   currentUser,
   nav,
   toast,
@@ -23,7 +22,7 @@ export function PostListPage({
     (async () => {
       setLoading(true);
       try {
-        const data = await api.get(`${endpoint}?page=0&size=20`, token);
+        const data = await api.get(`${endpoint}?page=0&size=20`);
         if (!cancelled) setPosts(data);
       } catch (e) {
         if (!cancelled) {
@@ -37,7 +36,7 @@ export function PostListPage({
     return () => {
       cancelled = true;
     };
-  }, [endpoint, token]);
+  }, [endpoint]);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,8 +44,7 @@ export function PostListPage({
     async function checkNewPosts() {
       try {
         const latest = await api.get(
-          `${endpoint}?page=0&size=20`,
-          token
+          `${endpoint}?page=0&size=20`
         );
         if (cancelled || posts.length === 0) return;
 
@@ -65,12 +63,12 @@ export function PostListPage({
       cancelled = true;
       clearInterval(interval);
     };
-  }, [posts, endpoint, token]);
+  }, [posts, endpoint]);
 
   async function handleDelete(pid) {
     if (!window.confirm("Delete this post?")) return;
     try {
-      await api.del(`/api/posts/${pid}`, token);
+      await api.del(`/api/posts/${pid}`);
       setPosts((p) => p.filter((x) => x.id !== pid));
       toast("Post deleted", "success");
     } catch (e) {
@@ -82,7 +80,6 @@ export function PostListPage({
     <div>
       <PageHeader title={title} />
       <CreatePost
-        token={token}
         currentUser={currentUser}
         onCreated={(p) => setPosts((prev) => [p, ...prev])}
         toast={toast}
@@ -126,7 +123,6 @@ export function PostListPage({
           <PostCard
             key={p.id}
             post={p}
-            token={token}
             currentUser={currentUser}
             nav={nav}
             onDelete={handleDelete}

@@ -15,11 +15,12 @@ export function AuthPage({ mode, onLogin, nav, toast }) {
     setBusy(true);
     try {
       if (isLogin) {
+        // Backend sets ax_tok cookie; body now returns { username }
         const data = await api.post("/api/auth/login", {
           username: username.trim(),
           password,
         });
-        onLogin(data.token, username.trim());
+        onLogin(data.username);
       } else {
         await api.post("/api/auth/signup", {
           username: username.trim(),

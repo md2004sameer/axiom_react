@@ -13,7 +13,6 @@ import { api } from "../../utils/api";
 
 export function PostCard({
   post: init,
-  token,
   currentUser,
   nav,
   onDelete,
@@ -38,8 +37,8 @@ export function PostCard({
     setLikeBusy(true);
     try {
       const updated = isLiked
-        ? await api.del(`/api/posts/${post.id}/like`, token)
-        : await api.post(`/api/posts/${post.id}/like`, {}, token);
+        ? await api.del(`/api/posts/${post.id}/like`)
+        : await api.post(`/api/posts/${post.id}/like`, {});
       setPost(updated);
     } catch (e) {
       if (e.status === 409) toast("Already liked", "info");
@@ -55,8 +54,7 @@ export function PostCard({
     try {
       const updated = await api.post(
         `/api/posts/${post.id}/repost`,
-        {},
-        token
+        {}
       );
       setPost(updated);
       toast("Reposted!", "success");
@@ -74,8 +72,7 @@ export function PostCard({
     try {
       const updated = await api.post(
         `/api/posts/${post.id}/comment`,
-        { text: cText.trim() },
-        token
+        { text: cText.trim() }
       );
       setPost(updated);
       setCText("");
@@ -89,8 +86,7 @@ export function PostCard({
   async function deleteComment(cid) {
     try {
       const updated = await api.del(
-        `/api/posts/${post.id}/comment/${cid}`,
-        token
+        `/api/posts/${post.id}/comment/${cid}`
       );
       setPost(updated);
     } catch (e) {

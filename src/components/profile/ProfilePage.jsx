@@ -11,7 +11,6 @@ import { api } from "../../utils/api";
 
 export function ProfilePage({
   username,
-  token,
   currentUser,
   nav,
   toast,
@@ -35,8 +34,8 @@ export function ProfilePage({
       setIsFollowing(false);
       try {
         const [p, allPosts] = await Promise.all([
-          api.get(`/api/users/${username}`, token),
-          api.get(`/api/posts?page=0&size=50`, token),
+          api.get(`/api/users/${username}`),
+          api.get(`/api/posts?page=0&size=50`),
         ]);
         if (!cancelled) {
           setProfile(p);
@@ -64,8 +63,7 @@ export function ProfilePage({
     try {
       const updated = await api.post(
         `/api/users/${username}/follow`,
-        {},
-        token
+        {}
       );
       setProfile(updated);
       setIsFollowing(true);
@@ -85,8 +83,7 @@ export function ProfilePage({
     setFollowBusy(true);
     try {
       const updated = await api.del(
-        `/api/users/${username}/follow`,
-        token
+        `/api/users/${username}/follow`
       );
       setProfile(updated);
       setIsFollowing(false);
@@ -103,8 +100,7 @@ export function ProfilePage({
     try {
       const updated = await api.put(
         "/api/users/me",
-        { bio: editBio, profilePictureUrl: editPic },
-        token
+        { bio: editBio, profilePictureUrl: editPic }
       );
       setProfile(updated);
       setEditOpen(false);
@@ -119,7 +115,7 @@ export function ProfilePage({
   async function handleDeletePost(pid) {
     if (!window.confirm("Delete this post?")) return;
     try {
-      await api.del(`/api/posts/${pid}`, token);
+      await api.del(`/api/posts/${pid}`);
       setPosts((p) => p.filter((x) => x.id !== pid));
       toast("Post deleted", "success");
     } catch (e) {
@@ -326,7 +322,6 @@ export function ProfilePage({
           <PostCard
             key={p.id}
             post={p}
-            token={token}
             currentUser={currentUser}
             nav={nav}
             onDelete={handleDeletePost}

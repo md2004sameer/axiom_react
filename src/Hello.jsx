@@ -16,18 +16,25 @@ export default function Hello() {
     injectStyles();
   }, []);
 
-  const [token, setToken] = useState(
-    () => localStorage.getItem("ax_tok") || ""
-  );
-  const [currentUser, setCurrentUser] = useState(
-    () => localStorage.getItem("ax_user") || ""
-  );
-  const [page, setPage] = useState({
-    name: localStorage.getItem("ax_tok") ? "home" : "login",
-    params: {},
-  });
+  // Token lives in the httpOnly cookie — we only track the username in state.
+  const [currentUser, setCurrentUser] = useState("");
+  const [authChecked, setAuthChecked] = useState(false);
+  const [page, setPage] = useState({ name: "login", params: {} });
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const { toasts, add: toast } = useToast();
+
+  // On mount: ask the backend if we already have a valid session cookie.
+  useEffect(() => {
+    api.get("/api/auth/me")
+      .then(({ username }) => {
+        setCurrentUser(username);
+        setPage({ name: "home", params: {} });
+      })
+      .catch(() => {
+        // 401 = not logged in, stay on login page
+      })
+      .finally(() => setAuthChecked(true));
+  }, []);
 
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth < 768);
@@ -39,24 +46,22 @@ export default function Hello() {
     setPage({ name, params });
   }, []);
 
-  function handleLogin(tok, user) {
-    localStorage.setItem("ax_tok", tok);
-    localStorage.setItem("ax_user", user);
-    setToken(tok);
-    setCurrentUser(user);
+  function handleLogin(username) {
+    setCurrentUser(username);
     setPage({ name: "home", params: {} });
   }
 
   async function handleLogout() {
     try {
-      await api.post("/api/auth/logout", {}, token);
+      await api.post("/api/auth/logout", {});
     } catch {}
-    localStorage.removeItem("ax_tok");
-    localStorage.removeItem("ax_user");
-    setToken("");
     setCurrentUser("");
     setPage({ name: "login", params: {} });
   }
+
+  // Don't render anything until the session check resolves — avoids a
+  // login-page flash for users who are already authenticated.
+  if (!authChecked) return null;
 
   const isAuthed = !["login", "signup"].includes(page.name);
 
@@ -73,7 +78,6 @@ export default function Hello() {
         <PostListPage
           endpoint="/api/posts"
           title="Home"
-          token={token}
           currentUser={currentUser}
           nav={nav}
           toast={toast}
@@ -85,7 +89,6 @@ export default function Hello() {
         <PostListPage
           endpoint="/api/posts/feed"
           title="Feed"
-          token={token}
           currentUser={currentUser}
           nav={nav}
           toast={toast}
@@ -96,7 +99,6 @@ export default function Hello() {
       content = (
         <PostDetailPage
           postId={page.params.postId}
-          token={token}
           currentUser={currentUser}
           nav={nav}
           toast={toast}
@@ -107,7 +109,6 @@ export default function Hello() {
       content = (
         <ProfilePage
           username={page.params.username}
-          token={token}
           currentUser={currentUser}
           nav={nav}
           toast={toast}

@@ -9,7 +9,6 @@ import { api } from "../../utils/api";
 
 export function PostDetailPage({
   postId,
-  token,
   currentUser,
   nav,
   toast,
@@ -24,7 +23,7 @@ export function PostDetailPage({
     (async () => {
       setLoading(true);
       try {
-        const d = await api.get(`/api/posts/${postId}`, token);
+        const d = await api.get(`/api/posts/${postId}`);
         if (!cancelled) setPost(d);
       } catch (e) {
         if (!cancelled) {
@@ -44,8 +43,8 @@ export function PostDetailPage({
     const liked = post.likedBy?.includes(currentUser);
     try {
       const updated = liked
-        ? await api.del(`/api/posts/${postId}/like`, token)
-        : await api.post(`/api/posts/${postId}/like`, {}, token);
+        ? await api.del(`/api/posts/${postId}/like`)
+        : await api.post(`/api/posts/${postId}/like`, {});
       setPost(updated);
     } catch (e) {
       if (e.status === 409) toast("Already liked", "info");
@@ -59,8 +58,7 @@ export function PostDetailPage({
     try {
       const updated = await api.post(
         `/api/posts/${postId}/comment`,
-        { text: cText.trim() },
-        token
+        { text: cText.trim() }
       );
       setPost(updated);
       setCText("");
@@ -74,8 +72,7 @@ export function PostDetailPage({
   async function deleteComment(cid) {
     try {
       const updated = await api.del(
-        `/api/posts/${postId}/comment/${cid}`,
-        token
+        `/api/posts/${postId}/comment/${cid}`
       );
       setPost(updated);
     } catch (e) {

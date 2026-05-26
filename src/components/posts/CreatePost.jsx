@@ -4,7 +4,7 @@ import { Avatar } from "../shared/Avatar";
 import { Spinner } from "../shared/Spinner";
 import { api } from "../../utils/api";
 
-export function CreatePost({ token, currentUser, onCreated, toast }) {
+export function CreatePost({ currentUser, onCreated, toast }) {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const taRef = useRef();
@@ -13,7 +13,7 @@ export function CreatePost({ token, currentUser, onCreated, toast }) {
     if (!text.trim() || busy) return;
     setBusy(true);
     try {
-      const post = await api.post("/api/posts", { text: text.trim() }, token);
+      const post = await api.post("/api/posts", { text: text.trim() });
       setText("");
       if (taRef.current) taRef.current.style.height = "auto";
       onCreated(post);
